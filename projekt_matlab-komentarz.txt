@@ -1,0 +1,22 @@
+wczytywanie.m:
+po otwarciu pliku funkcją fopen, należy skonwertować dane (zapisane w postaci zero-jedynkowej, binarnej) do wartości liczbowych odpowiadających odczytom przetwornika analogowo-cyfrowego (funkcja fread() przyjmuje parametry: plik, liczbę próbek oraz typ danych). Próbkowanie odbywa się z częstotliwością 360 odczytów na sekundę, a dwa kanały ekg są ze sobą przeplatane (dlatego trzeba wziąć liczbę próbek równą czas (w sekundach) * 360 próbek / sekundę * 2).
+
+Zapis f(1:2:length(f)) oznacza wybranie co drugiego elementu z wektora f, od pierwszego aż do końca.
+
+wykresy.m:
+Po wykonaniu polecenia wczytywanie() w pliku wykresy.m, w środowisku Matlaba pojawia się zmienna data, zawierająca wyłącznie dane dla jednego kanału. Następnie dane te, po obróbce są rysowane.
+
+
+I. wykres:
+Pierwszy wykres ilustruje odczytane dane z pliku.
+II. wykres:
+
+Widać, że kompleks załamków QRS "wędruje" raz w górę, raz w dół. Ponadto wartość średnia jest niezerowa. Aby "linia bazowa" znajdowała się w zerze, należy wykres przesunąć. Można przesunąć wykres o stałą, jednak w tym przypadku dopasowano wielomian do danych, a następnie narysowano różnicę między danymi pomiarowymi a wartościami wielomianu odpowiadającym poszczególnym chwilom w czasie (próbkom). W ten sposób przebieg EKG oscyluje wokół zera, a załamki QRS są (najprawdopodobniej) narysowane z mniejszymi zakłóceniami.
+
+III. wykres
+
+Aby znaleźć załamki R oraz S wystarczy poszukać wartości maksymalnych (w przypadku minimów - można szukać wartości maksymalnych dla "odwróconego" wykresu). Funkcja findpeaks() pozwala na ustalenie minimalnej odległości między maksimami oraz minimalną wysokość. Dobierając parametry odległości i wysokości rzędu 100 próbek / 100 najmniej znaczących bitów (LSB) udało się poprawnie znaleźć załamki R oraz S (ich położenia).
+
+IV. wykres
+
+Idea znalezienia załamka Q polegała na wygładzeniu wykresu oraz znalezieniu minimów lokalnych w zadanym przedziale wartości (min_locks()). W teorii załamek Q powinien stanowić minimum lokalne przebiegu EKG, jednak ze względu na fizyczny odczyt (zakłócenia, szumy i - być może - wada serca) - tą metodą nie udało się jednoznacznie wyznaczyć załamków Q w kompleksie QRS.
